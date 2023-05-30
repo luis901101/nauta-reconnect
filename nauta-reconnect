@@ -29,7 +29,7 @@ function login() {
     if [ "$user" != "" ] && [ $pass != "" ]; then
     #      echo "Login with User: $user and Pass: $pass";
       curl -s --request POST \
-      --url https://secure.etecsa.net:8443//LoginServlet \
+      --url https://secure.etecsa.net:8443/LoginServlet \
       --header 'Content-Type: application/x-www-form-urlencoded' \
       --data username="$user" \
       --data password="$pass" \
