@@ -2,10 +2,22 @@
 
 user=none;
 pass=none;
+isConnected=0;
 userExitCode=0;
 passExitCode=0;
 
-login() {
+function checkConnection() {
+    responseCode=`curl --max-redirs 0 --silent --output /dev/null -X "GET" --write-out "%{http_code}" "http://www.cubadebate.cu/"`;
+    echo "Connection checking response code: $responseCode"
+    isCaptivePortal=`curl --silent -X "GET" "http://www.cubadebate.cu/" | grep "https://secure.etecsa.net" | wc -l`
+    if [ "$responseCode" = "200" ] && [ $isCaptivePortal -eq 0 ]; then
+      isConnected=1;
+    else
+      isConnected=0;
+    fi 
+}
+
+function login() {
   # credentials.txt json is expected to be found on nuta folder inside home folder
   cd ~/nauta;
   i=0;
@@ -29,4 +41,15 @@ login() {
   done
 }
 
-login;
+function start() {
+  checkConnection;
+  if [ $isConnected -eq 0 ]; then
+    echo "Is not connected, requesting nauta login.";
+    login;
+  else
+    echo "Nauta already connected.";
+  fi 
+  exit;
+}
+
+start;
